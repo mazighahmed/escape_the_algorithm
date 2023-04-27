@@ -329,5 +329,9 @@ int main()
 	liberer_texte(score);
 	TTF_Quit();
 	SDL_Quit();
+	printf("bob");
     	return 0;
 }
+
+//test test test
+//test 2
