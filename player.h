@@ -8,6 +8,12 @@ typedef struct
 }
 Jump;
 
+typedef struct conf
+{
+	SDLKey key[6];
+}
+conf;
+
 typedef struct
 {
 	animation anim;
@@ -20,6 +26,8 @@ typedef struct
 	int dx;
 	Jump saut;
 	int move;
+	SDL_Rect pos_abs;
+	conf config;
 
 	Image shadow;
 	Image img_vie;
@@ -28,7 +36,7 @@ typedef struct
 
 
 //INITIALISATION JOUEUR
-void initialiser_joueur(Player* joueur, char path[]);
+void initialiser_joueur(Player* joueur, char path[], int x, int y);
 
 
 //AFFICHAGE
@@ -37,6 +45,7 @@ void afficher_stats(Player joueur, SDL_Surface *screen, texte txte);
 
 
 //UPDATE
-void move_joueur(Player* joueur, Uint32 dt);
+void move_joueur(Player* joueur, Uint32 dt, Background *BG);
 void animer_joueur(Player* joueur);
 void saut(Player* joueur);
+void update_pos_abs(SDL_Rect *pos_abs, Player j);

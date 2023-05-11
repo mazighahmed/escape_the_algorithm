@@ -6,13 +6,17 @@
 #include <string.h>
 #include "image.h"
 #include "texte.h"
+#include "background.h"
+#include "collision.h"
 #include "player.h"
 
 
-void initialiser_joueur(Player* joueur, char path[])
+void initialiser_joueur(Player* joueur, char path[], int x, int y)
 {
-	joueur->pos.x = 500;
-	joueur->pos.y = 500;
+	joueur->pos.x = x;
+	joueur->pos.y = y;
+	joueur->pos.h = 128;
+	joueur->pos.w = 64;
 	joueur->dir = 0;
 	joueur->speed = 0.2;
 	joueur->acc = 0;
@@ -44,6 +48,12 @@ void initialiser_joueur(Player* joueur, char path[])
 	joueur->anim.image.pos2.y = 0;
 	joueur->anim.frame = 0;
 	joueur->anim.time = 0;
+
+	joueur->config.key[0] = SDLK_s;
+	joueur->config.key[1] = SDLK_z;
+	joueur->config.key[2] = SDLK_d;
+	joueur->config.key[3] = SDLK_q;
+
 }
 
 
@@ -91,7 +101,7 @@ void animer_joueur(Player* joueur)
 	}
 }
 
-void move_joueur(Player* joueur, Uint32 dt)
+void move_joueur(Player* joueur, Uint32 dt, Background *BG)
 {	
 	joueur->acc -= 0.001;
 	if (joueur->acc <= 0)
@@ -111,10 +121,11 @@ void move_joueur(Player* joueur, Uint32 dt)
 		else if (joueur->dir == 3)//LEFT
 			joueur->pos.x -= joueur->dx;
 	}
-	
-	joueur->shadow.pos1.x = joueur->pos.x - 21;
-	joueur->shadow.pos1.y = joueur->pos.y + 110;
-	
+
+		joueur->shadow.pos1.x = joueur->pos.x;
+		joueur->shadow.pos1.y = joueur->pos.y + 110;
+		joueur->pos_abs.x = joueur->shadow.pos1.x + BG->camera_pos.x;
+		joueur->pos_abs.y = joueur->shadow.pos1.y + BG->camera_pos.y;
 	
 }
 
@@ -131,6 +142,32 @@ void saut(Player* joueur)
 			joueur->saut.gravite = 0;
 		}
 	}
+}
+
+void update_pos_abs(SDL_Rect *pos_abs, Player j)
+{
+	pos_abs->w = j.shadow.img->w;
+	pos_abs->h = j.shadow.img->h;
+	switch(j.dir)
+	{
+		case 0:
+			pos_abs->y = j.pos_abs.y + j.dx;
+			pos_abs->x = j.pos_abs.x;
+			break;
+		case 1:
+			pos_abs->y = j.pos_abs.y - j.dx;
+			pos_abs->x = j.pos_abs.x;
+			break;
+		case 2:
+			pos_abs->y = j.pos_abs.y;
+			pos_abs->x = j.pos_abs.x + j.dx;
+			break;
+		case 3:
+			pos_abs->y = j.pos_abs.y;
+			pos_abs->x = j.pos_abs.x - j.dx;
+			break;
+	}
+
 }
 
 
